@@ -184,7 +184,7 @@ def train_model(det_head, net, train_loader, criterion_cls, criterion_reg, cls_l
                     print('No such head:', det_head)
                     exit(0)
             epoch_loss += loss.item()
-        epoch_loss /= len(train_loader)
+        epoch_loss /= len(train_loader) #store all the epochloss in an array of len(epoch) then plot? might work
         if epoch%(save_interval-1) == 0 and epoch > 0:
             filename = os.path.join(save_dir, 'epoch%d.pth' % epoch)
             torch.save(net.state_dict(), filename)
