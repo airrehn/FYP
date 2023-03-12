@@ -99,11 +99,12 @@ if __name__ == '__main__':
                 #y_pred = lms_pred[i*2+1] * det_height
                 cv2.circle(image, (int(x_pred), int(y_pred)),  int(circleRadiusScale * min(image_height,image_width)), (0, 0, 255), -1)
             
-            cv2.line(image, pointChin, pointThyroidNotch , (0,200,0),2)
-            cv2.putText(image, 'TMD: {:.2f} cm'.format(thyromentalDistance), pointText, cv2.FONT_HERSHEY_COMPLEX, textFontScale * min(image_height,image_width), (0,200,0),  int(textFontThicknessScale * min(image_height,image_width)))
+            cv2.line(image, pointChin, pointThyroidNotch , (0,255,17),2)
+            cv2.putText(image, 'TMD: {:.2f} cm'.format(thyromentalDistance), pointText, cv2.FONT_HERSHEY_COMPLEX, textFontScale * min(image_height,image_width), (0,200,0),  int(textFontThicknessScale * max(image_height,image_width)))
             print(thyromentalDistance)
             print(image_height*image_width)
             cv2.namedWindow(filename, cv2.WINDOW_NORMAL)
+            cv2.resizeWindow(filename, 700, 700)
             cv2.moveWindow(filename, 750,250)
             cv2.imshow(filename, image)
             cv2.waitKey(0)
