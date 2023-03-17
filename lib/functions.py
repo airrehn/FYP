@@ -7,6 +7,7 @@ import torch.nn as nn
 import random
 import time
 from scipy.integrate import simps
+import matplotlib.pyplot as plt
 
 
 def get_label(data_name, label_file, task_type=None):
@@ -108,7 +109,8 @@ def compute_loss_pip(outputs_map, outputs_local_x, outputs_local_y, outputs_nb_x
     loss_nb_y = criterion_reg(outputs_nb_y_select, labels_nb_y_select)
     return loss_map, loss_x, loss_y, loss_nb_x, loss_nb_y
 
-def train_model(det_head, net, train_loader, criterion_cls, criterion_reg, cls_loss_weight, reg_loss_weight, num_nb, optimizer, num_epochs, scheduler, save_dir, save_interval, device):
+def train_model(det_head, net, train_loader, criterion_cls, criterion_reg, cls_loss_weight, reg_loss_weight, num_nb, optimizer, num_epochs, scheduler, save_dir, save_interval, device,name):
+    error = []
     for epoch in range(num_epochs):
         print('Epoch {}/{}'.format(epoch, num_epochs - 1))
         logging.info('Epoch {}/{}'.format(epoch, num_epochs - 1))
@@ -147,11 +149,22 @@ def train_model(det_head, net, train_loader, criterion_cls, criterion_reg, cls_l
                     exit(0)
             epoch_loss += loss.item()
         epoch_loss /= len(train_loader)
+        error.append(epoch_loss)
+        
         if epoch%(save_interval-1) == 0 and epoch > 0:
-            filename = os.path.join(save_dir, 'epoch%d.pth' % epoch)
+            filename = os.path.join(save_dir, '%s_epoch%d_bs96.pth' % (name,epoch))
             torch.save(net.state_dict(), filename)
             print(filename, 'saved')
         scheduler.step()
+    
+    plt.plot(range(len(error)), error, label = name )
+    plt.legend()
+    plt.xlabel("Epoch")
+    plt.xticks(np.arange(0,len(error),5))
+    plt.ylabel("Loss (Magnitude)")
+    # plt.yticks(np.arange(0.3, 1.5, 0.2))
+    plt.title("Loss vs Epoch")
+    plt.savefig("backbones_%d_epoch_erorr.png" % epoch)
     return net
 
 def forward_pip(net, inputs, preprocess, input_size, net_stride, num_nb):

@@ -5,6 +5,7 @@ import logging
 import torch
 import torch.nn as nn
 import random
+import matplotlib.pyplot as plt
 
 def get_label(data_name, label_file, task_type=None):
     label_path = os.path.join('data', data_name, label_file)
@@ -137,7 +138,8 @@ def compute_loss_pip(outputs_map1, outputs_map2, outputs_map3, outputs_local_x, 
         loss_nb_y /= masks_nb_y_select.sum()
     return loss_map, loss_x, loss_y, loss_nb_x, loss_nb_y
 
-def train_model(det_head, net, train_loader, criterion_cls, criterion_reg, cls_loss_weight, reg_loss_weight, num_nb, optimizer, num_epochs, scheduler, save_dir, save_interval, device):
+def train_model(det_head, net, train_loader, criterion_cls, criterion_reg, cls_loss_weight, reg_loss_weight, num_nb, optimizer, num_epochs, scheduler, save_dir, save_interval, device, name):
+    error= []
     for epoch in range(num_epochs):
         print('Epoch {}/{}'.format(epoch, num_epochs - 1))
         logging.info('Epoch {}/{}'.format(epoch, num_epochs - 1))
@@ -185,11 +187,91 @@ def train_model(det_head, net, train_loader, criterion_cls, criterion_reg, cls_l
                     exit(0)
             epoch_loss += loss.item()
         epoch_loss /= len(train_loader) #store all the epochloss in an array of len(epoch) then plot? might work
+        error.append(epoch_loss)
+        
         if epoch%(save_interval-1) == 0 and epoch > 0:
-            filename = os.path.join(save_dir, 'epoch%d.pth' % epoch)
+            filename = os.path.join(save_dir, '%s_epoch%d.pth' % (name,epoch))
             torch.save(net.state_dict(), filename)
             print(filename, 'saved')
         scheduler.step()
+    plt.plot(range(len(error)), error)
+    plt.xlabel("Epoch")
+    plt.xticks(np.arange(0,len(error),5))
+    plt.ylabel("Loss (Magnitude)")
+    plt.title("Loss vs Epoch")
+    if not os.path.exists('./graphs'):
+        os.makedirs('./graphs')
+    graphfilename = os.path.join('./graphs',"%s_%d_epoch_erorr.png" % (name,epoch))
+    plt.savefig(graphfilename)
+    return net
+
+
+def train_model(det_head, net, train_loader, criterion_cls, criterion_reg, cls_loss_weight, reg_loss_weight, num_nb, optimizer, num_epochs, scheduler, save_dir, save_interval, device,name, ti):
+    error= []
+    for epoch in range(num_epochs):
+        print('Epoch {}/{}'.format(epoch, num_epochs - 1))
+        logging.info('Epoch {}/{}'.format(epoch, num_epochs - 1))
+        print('-' * 10)
+        logging.info('-' * 10)
+        net.train()
+        epoch_loss = 0.0
+
+        for i, data in enumerate(train_loader):
+            if det_head == 'pip':
+                inputs, labels_map1, labels_map2, labels_map3, labels_x, labels_y, labels_nb_x, labels_nb_y, masks_map1, masks_map2, masks_map3, masks_x, masks_y, masks_nb_x, masks_nb_y = data
+                inputs = inputs.to(device)
+                labels_map1 = labels_map1.to(device)
+                labels_map2 = labels_map2.to(device)
+                labels_map3 = labels_map3.to(device)
+                labels_x = labels_x.to(device)
+                labels_y = labels_y.to(device)
+                labels_nb_x = labels_nb_x.to(device)
+                labels_nb_y = labels_nb_y.to(device)
+                masks_map1 = masks_map1.to(device)
+                masks_map2 = masks_map2.to(device)
+                masks_map3 = masks_map3.to(device)
+                masks_x = masks_x.to(device)
+                masks_y = masks_y.to(device)
+                masks_nb_x = masks_nb_x.to(device)
+                masks_nb_y = masks_nb_y.to(device)
+                outputs_map1, outputs_map2, outputs_map3, outputs_x, outputs_y, outputs_nb_x, outputs_nb_y = net(inputs)
+                loss_map, loss_x, loss_y, loss_nb_x, loss_nb_y = compute_loss_pip(outputs_map1, outputs_map2, outputs_map3, outputs_x, outputs_y, outputs_nb_x, outputs_nb_y, labels_map1, labels_map2, labels_map3, labels_x, labels_y, labels_nb_x, labels_nb_y, masks_map1, masks_map2, masks_map3, masks_x, masks_y, masks_nb_x, masks_nb_y, criterion_cls, criterion_reg, num_nb)
+                loss = cls_loss_weight*loss_map + reg_loss_weight*loss_x + reg_loss_weight*loss_y + reg_loss_weight*loss_nb_x + reg_loss_weight*loss_nb_y
+            else:
+                print('No such head:', det_head)
+                exit(0)
+
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+            if i%10 == 0:
+                if det_head == 'pip':
+                    print('[Epoch {:d}/{:d}, Batch {:d}/{:d}] <Total loss: {:.6f}> <map loss: {:.6f}> <x loss: {:.6f}> <y loss: {:.6f}> <nbx loss: {:.6f}> <nby loss: {:.6f}>'.format(
+                        epoch, num_epochs-1, i, len(train_loader)-1, loss.item(), cls_loss_weight*loss_map.item(), reg_loss_weight*loss_x.item(), reg_loss_weight*loss_y.item(), reg_loss_weight*loss_nb_x.item(), reg_loss_weight*loss_nb_y.item()))
+                    logging.info('[Epoch {:d}/{:d}, Batch {:d}/{:d}] <Total loss: {:.6f}> <map loss: {:.6f}> <x loss: {:.6f}> <y loss: {:.6f}> <nbx loss: {:.6f}> <nby loss: {:.6f}>'.format(
+                        epoch, num_epochs-1, i, len(train_loader)-1, loss.item(), cls_loss_weight*loss_map.item(), reg_loss_weight*loss_x.item(), reg_loss_weight*loss_y.item(), reg_loss_weight*loss_nb_x.item(), reg_loss_weight*loss_nb_y.item()))
+                else:
+                    print('No such head:', det_head)
+                    exit(0)
+            epoch_loss += loss.item()
+        epoch_loss /= len(train_loader) #store all the epochloss in an array of len(epoch) then plot? might work
+        error.append(epoch_loss)
+        
+        if epoch%(save_interval-1) == 0 and epoch > 0:
+            filename = os.path.join(save_dir, '%s_epoch%d.pth' % (name,epoch))
+            torch.save(net.state_dict(), filename)
+            print(filename, 'saved')
+        scheduler.step()
+    plt.plot(range(len(error)), error, label = "Re-training: %d" %(ti+1))
+    plt.legend()
+    plt.xlabel("Epoch")
+    plt.xticks(np.arange(0,len(error),5))
+    plt.ylabel("Loss (Magnitude)")
+    plt.title("Loss vs Epoch")
+    if not os.path.exists('./graphs'):
+        os.makedirs('./graphs')
+    graphfilename = os.path.join('./graphs',"%s_%d_epoch_erorr_%d.png" % (name,epoch,ti+1))
+    plt.savefig(graphfilename)
     return net
 
 def forward_pip(net, inputs, preprocess, input_size, net_stride, num_nb):
