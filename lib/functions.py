@@ -162,7 +162,6 @@ def train_model(det_head, net, train_loader, criterion_cls, criterion_reg, cls_l
     plt.xlabel("Epoch")
     plt.xticks(np.arange(0,len(error),5))
     plt.ylabel("Loss (Magnitude)")
-    # plt.yticks(np.arange(0.3, 1.5, 0.2))
     plt.title("Loss vs Epoch")
     plt.savefig("backbones_%d_epoch_erorr.png" % epoch)
     return net

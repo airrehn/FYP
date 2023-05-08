@@ -21,15 +21,16 @@ if __name__ == '__main__':
     test_labels = 'test.txt'
     test_images = 'images_test'
     nmeArray = []
-    experiment_name = ['pip_32_16_60_r18_l2_l1_10_1_nb10','pip_32_16_60_r50_l2_l1_10_1_nb10','pip_32_16_60_r101_l2_l1_10_1_nb10']
-    for exp in experiment_name: 
+    experiment_name = 'pip_32_16_60_r18_l2_l1_10_1_nb10'
+    numNeighbors= [1,2,3]
+    for neighbors in numNeighbors: 
         data_name = 'nAFLW'
-        config_path = '.experiments.{}.{}'.format(data_name, exp)
+        config_path = '.experiments.{}.{}'.format(data_name, experiment_name)
         
         my_config = importlib.import_module(config_path, package='PIPNet')
         Config = getattr(my_config, 'Config')
         cfg = Config()
-        cfg.experiment_name = exp
+        cfg.experiment_name = experiment_name
         cfg.data_name = data_name
 
         os.environ['CUDA_VISIBLE_DEVICES'] = str(cfg.gpu_id)
@@ -66,7 +67,8 @@ if __name__ == '__main__':
         print('reg_loss_weight:', cfg.reg_loss_weight)
         print('num_lms:', cfg.num_lms)
         print('save_interval:', cfg.save_interval)
-        print('num_nb:', cfg.num_nb)
+        print('num_nb:', neighbors)
+        # print('num_nb:', cfg.num_nb)
         print('use_gpu:', cfg.use_gpu)
         print('gpu_id:', cfg.gpu_id)
         print('###########################################')
@@ -88,7 +90,8 @@ if __name__ == '__main__':
         logging.info('reg_loss_weight: {}'.format(cfg.reg_loss_weight))
         logging.info('num_lms: {}'.format(cfg.num_lms))
         logging.info('save_interval: {}'.format(cfg.save_interval))
-        logging.info('num_nb: {}'.format(cfg.num_nb))
+        logging.info('num_nb: {}'.format(neighbors))
+        # logging.info('num_nb: {}'.format(cfg.num_nb))
         logging.info('use_gpu: {}'.format(cfg.use_gpu))
         logging.info('gpu_id: {}'.format(cfg.gpu_id))
         logging.info('###########################################')
@@ -106,7 +109,7 @@ if __name__ == '__main__':
         optimizer = optim.Adam(net.parameters(), lr=cfg.init_lr)
         scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=cfg.decay_steps, gamma=0.1)
 
-        points_flip = [2,1,3,4,5] #if image flipped horizontally, how does the new points look like. 1 & 2 swapped, 345 are symmetry.
+        points_flip = [2,1,3,4,5] #if image flipped horizontally, how does the new points look like. 1 & 2 swapped, 3,4,5 are symmetric.
         points_flip = (np.array(points_flip)-1).tolist()
         assert len(points_flip) == 5
         normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
@@ -123,7 +126,8 @@ if __name__ == '__main__':
 
         train_loader = torch.utils.data.DataLoader(train_data, batch_size=cfg.batch_size, shuffle=True, num_workers=2, pin_memory=True, drop_last=True)
 
-        train_model(cfg.det_head, net, train_loader, criterion_cls, criterion_reg, cfg.cls_loss_weight, cfg.reg_loss_weight, cfg.num_nb, optimizer, cfg.num_epochs, scheduler, save_dir, cfg.save_interval, device, 'pure_supervised_' + cfg.backbone)
+        train_model(cfg.det_head, net, train_loader, criterion_cls, criterion_reg, cfg.cls_loss_weight, cfg.reg_loss_weight, neighbors, optimizer, cfg.num_epochs, scheduler, save_dir, cfg.save_interval, device, 'pure_supervised_' + cfg.backbone)
+        # train_model(cfg.det_head, net, train_loader, criterion_cls, criterion_reg, cfg.cls_loss_weight, cfg.reg_loss_weight, cfg.num_nb, optimizer, cfg.num_epochs, scheduler, save_dir, cfg.save_interval, device, 'pure_supervised_' + cfg.backbone)
         #train_model(cfg.det_head, net, train_loader, criterion_cls, criterion_reg, cfg.cls_loss_weight, cfg.reg_loss_weight, cfg.num_nb, optimizer, 3, scheduler, save_dir, 3, device, 'pure_supervised_' + cfg.backbone)
        
         # initial test
@@ -159,14 +163,14 @@ if __name__ == '__main__':
         initialNME = np.mean(nmes) * 100
         nmeArray.append(initialNME)
 
-    experiment_name = ['resnet18', 'resnet50', 'resnet101']
+    numNeighbors = ['1', '2', '3']
     plt.cla()
-    plt.barh(experiment_name, nmeArray)
-    plt.xlabel("NME (%)")
+    plt.plot(numNeighbors, nmeArray)
+    plt.ylabel("NME (%)")
     # plt.xticks(np.arange(0,len(nmeArr),1))
-    # plt.ylabel("Backbones")
-    plt.title("Normalized Mean Error vs Backbone")
-    plt.savefig("backbones_epch60_bs96")
+    plt.xlabel("Neighbors")
+    plt.title("Normalized Mean Error vs Neighbors")
+    plt.savefig("neighbours_epch60_bs96_2")
 
 
 

@@ -30,8 +30,7 @@ if __name__ == '__main__':
     net = Pip_resnet18(resnet18, cfg.num_nb, num_lms=cfg.num_lms, input_size=cfg.input_size, net_stride=cfg.net_stride).cuda()
     print(torch.cuda.is_available())
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    weight_file = 'D:/project/PIPNet/snapshots/nAFLW/pip_32_16_60_r18_l2_l1_10_1_nb10/pure_supervised_resnet18_epoch59.pth'
-    #weight_file = os.path.join(save_dir, 'epoch%d.pth' % (cfg.num_epochs-1))
+    weight_file = 'D:/project/PIPNet/snapshots/nAFLW/pip_32_16_60_r18_l2_l1_10_1_nb10/SSL_nAFLW_epoch59.pth' #pick the saved model you want
     state_dict = torch.load(weight_file, map_location=device)
     net.load_state_dict(state_dict)
 
@@ -40,9 +39,9 @@ if __name__ == '__main__':
     preprocess = transforms.Compose([transforms.Resize((cfg.input_size, cfg.input_size)), transforms.ToTensor(), normalize])
 
     detector = FaceMeshDetector(maxFaces=1)
-    circleRadiusScale= 0.015
+    circleRadiusScale= 0.010
     textFontScale = 0.00125
-    textFontThicknessScale = 0.0015
+    textFontThicknessScale = 0.0025
 
     def demo_image(image_folder, net, preprocess, input_size, net_stride, num_nb, use_gpu, device):
         net.eval()
@@ -51,12 +50,6 @@ if __name__ == '__main__':
             image = cv2.imread(os.path.join(image_folder,filename))
             image_height, image_width, _ = image.shape
 
-            # det_xmin = 0
-            # det_ymin = 0
-            # det_xmax = image_width-1
-            # det_ymax = image_height-1
-            # det_width = det_xmax - det_xmin + 1
-            # det_height = det_ymax - det_ymin + 1
 
             det_width = image_width
             det_height = image_height
@@ -92,17 +85,15 @@ if __name__ == '__main__':
             thyromentalDistance = thyromentalDistanceInPixel * cmPerPixel
 
             for i in range(cfg.num_lms):
-                #unmerge and merge variation basically has smth to do with multiple faces in the image, linked to bounding box? merged seems better without a bounding box.
+            #unmerge and merge variation basically has smth to do with multiple faces in the image, linked to bounding box? merged seems better without a bounding box.
                 x_pred = lms_pred_merge[i*2] * det_width 
                 y_pred = lms_pred_merge[i*2+1] * det_height 
                 #x_pred = lms_pred[i*2] * det_width
                 #y_pred = lms_pred[i*2+1] * det_height
                 cv2.circle(image, (int(x_pred), int(y_pred)),  int(circleRadiusScale * min(image_height,image_width)), (0, 0, 255), -1)
-            
+        
             cv2.line(image, pointChin, pointThyroidNotch , (0,255,17),2)
-            cv2.putText(image, 'TMD: {:.2f} cm'.format(thyromentalDistance), pointText, cv2.FONT_HERSHEY_COMPLEX, textFontScale * min(image_height,image_width), (0,200,0),  int(textFontThicknessScale * max(image_height,image_width)))
-            print(thyromentalDistance)
-            print(image_height*image_width)
+            cv2.putText(image, 'Distance: {:.2f} cm'.format(thyromentalDistance), pointText, cv2.FONT_HERSHEY_COMPLEX, textFontScale * min(image_height,image_width), (0,200,0),  int(textFontThicknessScale * max(image_height,image_width)))
             cv2.namedWindow(filename, cv2.WINDOW_NORMAL)
             cv2.resizeWindow(filename, 700, 700)
             cv2.moveWindow(filename, 750,250)

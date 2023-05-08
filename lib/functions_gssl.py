@@ -138,7 +138,7 @@ def compute_loss_pip(outputs_map1, outputs_map2, outputs_map3, outputs_local_x, 
         loss_nb_y /= masks_nb_y_select.sum()
     return loss_map, loss_x, loss_y, loss_nb_x, loss_nb_y
 
-def train_model(det_head, net, train_loader, criterion_cls, criterion_reg, cls_loss_weight, reg_loss_weight, num_nb, optimizer, num_epochs, scheduler, save_dir, save_interval, device, name):
+def train_model_supervised(det_head, net, train_loader, criterion_cls, criterion_reg, cls_loss_weight, reg_loss_weight, num_nb, optimizer, num_epochs, scheduler, save_dir, save_interval, device, name):
     error= []
     for epoch in range(num_epochs):
         print('Epoch {}/{}'.format(epoch, num_epochs - 1))
@@ -186,7 +186,7 @@ def train_model(det_head, net, train_loader, criterion_cls, criterion_reg, cls_l
                     print('No such head:', det_head)
                     exit(0)
             epoch_loss += loss.item()
-        epoch_loss /= len(train_loader) #store all the epochloss in an array of len(epoch) then plot? might work
+        epoch_loss /= len(train_loader) #store all the epochloss in an array of len(epoch) then plot
         error.append(epoch_loss)
         
         if epoch%(save_interval-1) == 0 and epoch > 0:
@@ -254,7 +254,7 @@ def train_model(det_head, net, train_loader, criterion_cls, criterion_reg, cls_l
                     print('No such head:', det_head)
                     exit(0)
             epoch_loss += loss.item()
-        epoch_loss /= len(train_loader) #store all the epochloss in an array of len(epoch) then plot? might work
+        epoch_loss /= len(train_loader) #store all the epochloss in an array of len(epoch) then plot?
         error.append(epoch_loss)
         
         if epoch%(save_interval-1) == 0 and epoch > 0:
@@ -270,7 +270,7 @@ def train_model(det_head, net, train_loader, criterion_cls, criterion_reg, cls_l
     plt.title("Loss vs Epoch")
     if not os.path.exists('./graphs'):
         os.makedirs('./graphs')
-    graphfilename = os.path.join('./graphs',"%s_%d_epoch_erorr_%d.png" % (name,epoch,ti+1))
+    graphfilename = os.path.join('./graphs',"%s_%d_epoch_erorr_%d_noCur.png" % (name,epoch,ti+1))
     plt.savefig(graphfilename)
     return net
 

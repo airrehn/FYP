@@ -20,8 +20,8 @@ def gen_meanface(root_folder, data_name):
 def process_aflw(root_folder, image_name, anno, target_size):
     image = cv2.imread(os.path.join(root_folder, 'nAFLW', 'images', image_name))
     image_height, image_width, _ = image.shape
-    anno_x = anno[0::2]
-    anno_y = anno[1::2]
+    anno_x = anno[0::2] #every even
+    anno_y = anno[1::2] #every odd
 
     #just safety checks
     anno_x = [x if x >=0 else 0 for x in anno_x] 
@@ -30,12 +30,11 @@ def process_aflw(root_folder, image_name, anno, target_size):
     anno_y = [y if y <=image_height else image_height for y in anno_y] 
 
     
-    xmin = 0 #l
-    ymin = 0 #t
-    xmax = image_width-1 #r
-    ymax = image_height-1 #b
+    xmin = 0 #left
+    ymin = 0 #top
+    xmax = image_width-1 #right
+    ymax = image_height-1 #bottom
 
-    #image_crop = image[int(ymin):int(ymax), int(xmin):int(xmax), :]
 
     image_crop = cv2.resize(image, (target_size, target_size)) #resize to 256x256
 
@@ -57,12 +56,12 @@ def gen_data(root_folder, target_size):
     ################################################################################################################
 
 
-    nameList,annos = np.array_split(np.loadtxt(os.path.join('../data','nAFLW', 'EDITTED_labels.txt'), dtype = str), [1], axis=1)
+    nameList,annos = np.array_split(np.loadtxt(os.path.join('../data',data_name, 'EDITTED_labels.txt'), dtype = str), [1], axis=1)
     nameList = nameList.flatten()
     annos = annos.astype(float)
     
 
-    with open(os.path.join(root_folder, 'nAFLW', 'train.txt'), 'w') as f:
+    with open(os.path.join(root_folder, data_name, 'train.txt'), 'w') as f:
         for index in range(0,1600):
             # from matlab index
             image_name = nameList[index] #index-1 because matlab range is 1~x, whereas index range is 0~x-1
@@ -72,13 +71,13 @@ def gen_data(root_folder, target_size):
             pad_num = 5-len(str(index+1))
             image_crop_name = 'aflw_train_' + '0' * pad_num + str(index+1) + '.jpg'
             print(image_crop_name)
-            cv2.imwrite(os.path.join(root_folder, 'nAFLW', 'images_train', image_crop_name), image_crop) #saves image to aflw/images_train
+            cv2.imwrite(os.path.join(root_folder, data_name, 'images_train', image_crop_name), image_crop) #saves image to aflw/images_train
             f.write(image_crop_name+' ') #writes into train.txt
             for x,y in anno:
                 f.write(str(x)+' '+str(y)+' ')
             f.write('\n')
 
-    with open(os.path.join(root_folder, 'nAFLW', 'test.txt'), 'w') as f:
+    with open(os.path.join(root_folder, data_name, 'test.txt'), 'w') as f:
         for index in range(1600,2000):
             # from matlab index
             image_name = nameList[index]
@@ -88,7 +87,7 @@ def gen_data(root_folder, target_size):
             pad_num = 5-len(str(index))
             image_crop_name = 'aflw_test_' + '0' * pad_num + str(index+1) + '.jpg'
             print(image_crop_name)
-            cv2.imwrite(os.path.join(root_folder, 'nAFLW', 'images_test', image_crop_name), image_crop)
+            cv2.imwrite(os.path.join(root_folder, data_name, 'images_test', image_crop_name), image_crop)
             f.write(image_crop_name+' ')
             for x,y in anno:
                 f.write(str(x)+' '+str(y)+' ')
