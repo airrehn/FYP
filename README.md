@@ -23,3 +23,5 @@ PIPNet
    |-- AFLW
        |-- flickr
        |-- AFLWinfo_release.mat
+````
+5. Grab the neckLabels file and 
