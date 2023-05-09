@@ -8,7 +8,7 @@ class Config():
         self.num_epochs = 60
         self.decay_steps = [30, 50]
         self.input_size = 256
-        self.backbone = 'resnet101' #the 18, can change to 50 or 101 too?
+        self.backbone = 'resnet101'
         self.pretrained = True
         self.criterion_cls = 'l2'
         self.criterion_reg = 'l1'
@@ -16,7 +16,7 @@ class Config():
         self.reg_loss_weight = 1
         self.num_lms = 5 
         self.save_interval = self.num_epochs
-        self.num_nb = 3 #change?
+        self.num_nb = 3
         self.use_gpu = True
         self.gpu_id = 0
         self.curriculum = True

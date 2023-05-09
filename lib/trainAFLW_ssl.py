@@ -21,13 +21,16 @@ import data_utils_gssl
 from functions_gssl import * 
 
 
-
-
-
 if __name__ == '__main__': 
 
-    experiment_name = 'pip_32_16_60_r18_l2_l1_10_1_nb10' #change depending on which configuration file you used from experiments/nAFLW/<file_name>.
-    data_name = 'nAFLW'
+    if not len(sys.argv) == 2:
+        print('Format:')
+        print('python lib/trainAFLW_ssl.py config_file')
+        exit(0)
+
+    experiment_name = sys.argv[1].split('/')[-1][:-3]
+    data_name = sys.argv[1].split('/')[-2]
+
     test_labels = 'test.txt'
     test_images = 'images_test'
     config_path = '.experiments.{}.{}'.format(data_name, experiment_name)
@@ -129,11 +132,14 @@ if __name__ == '__main__':
                                         normalize]))
 
 
-    train_loader = torch.utils.data.DataLoader(train_data, batch_size=cfg.batch_size, shuffle=True, num_workers=8, pin_memory=True, drop_last=True)
+    train_loader = torch.utils.data.DataLoader(train_data, batch_size=cfg.batch_size, shuffle=True, num_workers=0, pin_memory=True, drop_last=True)
 
-    # train_model(cfg.det_head, net, train_loader, criterion_cls, criterion_reg, cfg.cls_loss_weight, cfg.reg_loss_weight, cfg.num_nb, optimizer, cfg.num_epochs, scheduler, save_dir, cfg.save_interval, device, 'pure_supervised_' + cfg.backbone)
+    #train_model_supervised(cfg.det_head, net, train_loader, criterion_cls, criterion_reg, cfg.cls_loss_weight, cfg.reg_loss_weight, cfg.num_nb, optimizer, cfg.num_epochs, scheduler, save_dir, cfg.save_interval, device, 'pure_supervised_' + cfg.backbone)
 
-    weight_file = 'D:/project/PIPNet/snapshots/nAFLW/pip_32_16_60_r18_l2_l1_10_1_nb10/pure_supervised_resnet18_epoch19_bs96.pth'
+    # IF YOU DONT WANT TO RETRAIN THE SUPERVISED PORTION EVERYTIME, you can just load in the trained model:
+    # UNCOMMENT the 3 lines below, COMMENT the train_model_supervised() line above.
+
+    weight_file = 'D:/project/PIPNet/snapshots/nAFLW/pip_32_16_60_r18_l2_l1_10_1_nb10/pure_supervised_resnet18_epoch19_bs96.pth' #load in the model you want
     state_dict = torch.load(weight_file, map_location=device)
     net.load_state_dict(state_dict)
 

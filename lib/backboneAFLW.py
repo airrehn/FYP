@@ -21,7 +21,7 @@ import data_utils_gssl
 from functions import * 
 
 
-
+#modification of trainAFLW.py to test for different backbones
 
 
 if __name__ == '__main__': 

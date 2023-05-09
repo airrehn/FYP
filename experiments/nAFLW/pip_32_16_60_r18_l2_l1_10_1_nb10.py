@@ -19,4 +19,4 @@ class Config():
         self.num_nb = 3 #found to be best
         self.use_gpu = True
         self.gpu_id = 0 #depends on your gpu number
-        self.curriculum = False
+        self.curriculum = True

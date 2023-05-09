@@ -11,11 +11,20 @@ sys.path.insert(0, '..')
 
 
 if __name__ == '__main__':  
-    experiment_name = 'pip_32_16_60_r18_l2_l1_10_1_nb10'
-    data_name = 'nAFLW'
+
+    if not len(sys.argv) == 4:
+        print('Format:')
+        print('python lib/demoAFLW.py <config_file> <image_folder> <model (.pth) file>')
+        exit(0)
+
+    experiment_name = sys.argv[1].split('/')[-1][:-3]
+    data_name = sys.argv[1].split('/')[-2]
+    image_folder = sys.argv[2]
+    weight_file = sys.argv[3] #pick the saved model you want
+
     config_path = '.experiments.{}.{}'.format(data_name, experiment_name)
 
-    image_folder = sys.argv[1]
+
 
     my_config = importlib.import_module(config_path, package='PIPNet')
     Config = getattr(my_config, 'Config')
@@ -30,7 +39,6 @@ if __name__ == '__main__':
     net = Pip_resnet18(resnet18, cfg.num_nb, num_lms=cfg.num_lms, input_size=cfg.input_size, net_stride=cfg.net_stride).cuda()
     print(torch.cuda.is_available())
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    weight_file = 'D:/project/PIPNet/snapshots/nAFLW/pip_32_16_60_r18_l2_l1_10_1_nb10/SSL_nAFLW_epoch59.pth' #pick the saved model you want
     state_dict = torch.load(weight_file, map_location=device)
     net.load_state_dict(state_dict)
 

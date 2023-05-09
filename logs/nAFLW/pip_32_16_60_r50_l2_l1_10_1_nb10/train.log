@@ -1,0 +1,29 @@
+INFO:root:###########################################
+INFO:root:experiment_name: pip_32_16_60_r50_l2_l1_10_1_nb10
+INFO:root:data_name: nAFLW
+INFO:root:det_head: pip
+INFO:root:net_stride: 32
+INFO:root:batch_size: 96
+INFO:root:init_lr: 0.0001
+INFO:root:num_epochs: 60
+INFO:root:decay_steps: [30, 50]
+INFO:root:input_size: 256
+INFO:root:backbone: resnet50
+INFO:root:pretrained: True
+INFO:root:criterion_cls: l2
+INFO:root:criterion_reg: l1
+INFO:root:cls_loss_weight: 10
+INFO:root:reg_loss_weight: 1
+INFO:root:num_lms: 5
+INFO:root:save_interval: 60
+INFO:root:num_nb: 3
+INFO:root:use_gpu: True
+INFO:root:gpu_id: 0
+INFO:root:###########################################
+INFO:root:Epoch 0/59
+INFO:root:----------
+INFO:root:[Epoch 0/59, Batch 0/15] <Total loss: 3.241980> <map loss: 0.168118> <x loss: 0.487910> <y loss: 0.511719> <nbx loss: 0.788778> <nby loss: 1.285455>
+INFO:root:[Epoch 0/59, Batch 10/15] <Total loss: 1.826746> <map loss: 0.141286> <x loss: 0.267842> <y loss: 0.256529> <nbx loss: 0.483903> <nby loss: 0.677186>
+INFO:root:Epoch 1/59
+INFO:root:----------
+INFO:root:[Epoch 1/59, Batch 0/15] <Total loss: 1.630865> <map loss: 0.140047> <x loss: 0.261137> <y loss: 0.225154> <nbx loss: 0.499379> <nby loss: 0.505148>

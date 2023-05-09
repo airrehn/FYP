@@ -1,34 +1,15 @@
-# supervised learning
+# supervised learning TEST
 
-# 300W, resnet18
-#python lib/test.py experiments/data_300W/pip_32_16_60_r18_l2_l1_10_1_nb10.py test.txt images_test
-# 300W, resnet101
-#python lib/test.py experiments/data_300W/pip_32_16_60_r101_l2_l1_10_1_nb10.py test.txt images_test
+# FOR EXAMPLE,
+# model (pth file) is in snapshots/nAFLW/pip_32_16_60_r18_l2_l1_10_1_nb10/SSL_nAFLW_epoch59.pth (Argument 3)
 
-# COFW, resnet18
-#python lib/test.py experiments/COFW/pip_32_16_60_r18_l2_l1_10_1_nb10.py test.txt images_test
-# COFW, resnet101
-#python lib/test.py experiments/COFW/pip_32_16_60_r101_l2_l1_10_1_nb10.py test.txt images_test
+#UNCOMMENT THE ONE CONFIG FILE YOU WANT TO RUN.
 
-# WFLW, resnet18
-#python lib/test.py experiments/WFLW/pip_32_16_60_r18_l2_l1_10_1_nb10.py test.txt images_test
-# WFLW, resnet101
-#python lib/test.py experiments/WFLW/pip_32_16_60_r101_l2_l1_10_1_nb10.py test.txt images_test
+# nAFLW, resnet18
+python lib/testAFLW.py experiments/nAFLW/pip_32_16_60_r18_l2_l1_10_1_nb10.py snapshots/nAFLW/pip_32_16_60_r18_l2_l1_10_1_nb10/SSL_nAFLW_epoch59.pth 
 
-# AFLW, resnet18
-#python lib/test.py experiments/AFLW/pip_32_16_60_r18_l2_l1_10_1_nb10.py test.txt images_test
-# AFLW, resnet101
-#python lib/test.py experiments/AFLW/pip_32_16_60_r101_l2_l1_10_1_nb10.py test.txt images_test
+# nAFLW, resnet50
+#python lib/testAFLW.py experiments/nAFLW/pip_32_16_60_r50_l2_l1_10_1_nb10.py snapshots/nAFLW/pip_32_16_60_r18_l2_l1_10_1_nb10/SSL_nAFLW_epoch59.pth 
 
-######################################################################################
-# GSSL
-
-# 300W + COFW_68 (unlabeled) + WFLW_68 (unlabeled), resnet18, with curriculum
-#python lib/test.py experiments/data_300W_COFW_WFLW/pip_32_16_60_r18_l2_l1_10_1_nb10_wcc.py test_300W.txt images_test_300W
-#python lib/test.py experiments/data_300W_COFW_WFLW/pip_32_16_60_r18_l2_l1_10_1_nb10_wcc.py test_COFW.txt images_test_COFW
-#python lib/test.py experiments/data_300W_COFW_WFLW/pip_32_16_60_r18_l2_l1_10_1_nb10_wcc.py test_WFLW.txt images_test_WFLW
-
-# 300W + CelebA (unlabeled), resnet18, with curriculum
-#python lib/test.py experiments/data_300W_CELEBA/pip_32_16_60_r18_l2_l1_10_1_nb10_wcc.py test_300W.txt images_test_300W
-#python lib/test.py experiments/data_300W_CELEBA/pip_32_16_60_r18_l2_l1_10_1_nb10_wcc.py test_COFW.txt images_test_COFW
-#python lib/test.py experiments/data_300W_CELEBA/pip_32_16_60_r18_l2_l1_10_1_nb10_wcc.py test_WFLW.txt images_test_WFLW
+# nAFLW, resnet101
+#python lib/testAFLW.py experiments/nAFLW/pip_32_16_60_r101_l2_l1_10_1_nb10.py snapshots/nAFLW/pip_32_16_60_r18_l2_l1_10_1_nb10/SSL_nAFLW_epoch59.pth 

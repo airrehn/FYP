@@ -2,6 +2,9 @@ import os, cv2
 import numpy as np
 import sys
 
+
+# Script to edit the given AFLW_labels (remove portion of name). preprocessAFLW.py will use this editted file.
+
 with open(('D:/project/aflw/neckAFLW_labels.txt'), 'r') as f, open('D:/project/aflw/EDITTED_labels.txt', 'w') as newf:
     lines = f.readlines()
     for line in lines:
