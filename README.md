@@ -24,4 +24,5 @@ PIPNet
        |-- flickr
        |-- AFLWinfo_release.mat
 ````
-5. Grab the neckLabels file and 
+5. Go to folder `lib`, preprocess a dataset by running ```python preprocess.py AFLW```
+6. 
