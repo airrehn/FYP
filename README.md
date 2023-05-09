@@ -64,5 +64,5 @@ PIPNet
 ## Training and Testing models
 
 12. Before training/testing/demo, check out the configuration files in ```experiments``` for example, ```experiments/nAFLW/pip_32_16_60_r18_l2_l1_10_1_nb10.py```. Then read the 4 `.sh` script files to understand the arguments taken.
-14. Now you can perform ```sh run_train.sh``` for a fully supervised model or ```sh run_trainSSL.sh``` for a semi-supervised model. Remember to edit the sh file first to choose which ```config``` file you want to run. Models are saved in ```snapshots```. Logging infomation is found in ```logs```.
-15. Similarly, testing a trained model can be done with ```sh run_test.sh```, do edit the sh file to select your model. And demo-ing a model can be done with ```sh run_demo.sh```, do edit the sh file to select your model and folder of unseen images.
+14. Now you can perform ```sh run_train.sh``` for a fully supervised model or ```sh run_trainSSL.sh``` for a semi-supervised model. Remember to first edit the files to choose which ```config``` file you desire. Models are saved in ```snapshots```. Logging infomation is found in ```logs```.
+15. Similarly, testing a trained model can be done with ```sh run_test.sh```, do edit the file to select your model. And demo-ing a model can be done with ```sh run_demo.sh```, do edit the file to select your model and folder of unseen images.
