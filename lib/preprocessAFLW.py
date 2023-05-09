@@ -71,7 +71,7 @@ def gen_data(root_folder, target_size):
             pad_num = 5-len(str(index+1))
             image_crop_name = 'aflw_train_' + '0' * pad_num + str(index+1) + '.jpg'
             print(image_crop_name)
-            cv2.imwrite(os.path.join(root_folder, data_name, 'images_train', image_crop_name), image_crop) #saves image to aflw/images_train
+            cv2.imwrite(os.path.join(root_folder, data_name, 'images_train', image_crop_name), image_crop) #saves image to nAFLW/images_train
             f.write(image_crop_name+' ') #writes into train.txt
             for x,y in anno:
                 f.write(str(x)+' '+str(y)+' ')

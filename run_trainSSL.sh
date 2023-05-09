@@ -1,4 +1,4 @@
-# supervised learning TRAIN
+# semi-supervised learning TRAIN (1600 labelled neck + 21k unlabelled aflw images)
 
 #UNCOMMENT THE ONE CONFIG FILE YOU WANT TO RUN.
 
