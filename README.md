@@ -25,8 +25,8 @@ PIPNet
        |-- flickr
        |-- AFLWinfo_release.mat
 ````
-7. Create a new folder nAFLW (n for neck) under data.
-8. Take ```EDITTED_labels.txt``` file from root and put into this folder (you can delete it from the root after). Copy all the AFLW images (from the 3 folders of flicker) and put it into one "image" folder under nAFLW. It should contain 21,123 images in total.
+5. Create a new folder nAFLW (n for neck) under data.
+6. Take ```EDITTED_labels.txt``` file from root and put into this folder (you can delete it from the root after). Copy all the AFLW images (from the 3 folders of flicker) and put it into one "image" folder under nAFLW. It should contain 21,123 images in total.
 ````
 PIPNet
 -- FaceBoxesV2
@@ -39,9 +39,9 @@ PIPNet
        |-- images
        |-- EDITTED_labels.txt
 ````
-9. Go to folder `lib`, do ```python preprocess256.py```.
-10. Then do ```python preprocessAFLW.py```.
-11. Next in the nAFLW folder, create a new folder called `images_train+aflw`, then copy and paste all images from the ```images_256``` and `images_train` folder into it.
+7. Go to folder `lib`, do ```python preprocess256.py```.
+8. Then do ```python preprocessAFLW.py```.
+9. Next in the nAFLW folder, create a new folder called `images_train+aflw`, then copy and paste all images from the ```images_256``` and `images_train` folder into it.
 ````
 PIPNet
 -- FaceBoxesV2
@@ -62,7 +62,6 @@ PIPNet
        |-- train.txt
 ````
 ## Training and Testing models
-
-12. Before training/testing/demo, check out the configuration files in ```experiments``` for example, ```experiments/nAFLW/pip_32_16_60_r18_l2_l1_10_1_nb10.py```. Then read the 4 `.sh` script files to understand the arguments taken.
-14. Now you can perform ```sh run_train.sh``` for a fully supervised model or ```sh run_trainSSL.sh``` for a semi-supervised model. Remember to first edit the files to choose which ```config``` file you desire. Models are saved in ```snapshots```. Logging infomation is found in ```logs```.
-15. Similarly, testing a trained model can be done with ```sh run_test.sh```, do edit the file to select your model. And demo-ing a model can be done with ```sh run_demo.sh```, do edit the file to select your model and folder of unseen images.
+10. Before training/testing/demo, check out the configuration files in ```experiments``` for example, ```experiments/nAFLW/pip_32_16_60_r18_l2_l1_10_1_nb10.py```. Then read the 4 `.sh` script files to understand the arguments taken.
+11. Now you can perform ```sh run_train.sh``` for a fully supervised model or ```sh run_trainSSL.sh``` for a semi-supervised model. Remember to first edit the files to choose which ```config``` file you desire. Models are saved in ```snapshots```. Logging infomation is found in ```logs```.
+12. Similarly, testing a trained model can be done with ```sh run_test.sh```, do edit the file to select your model. And demo-ing a model can be done with ```sh run_demo.sh```, do edit the file to select your model and folder of unseen images.
